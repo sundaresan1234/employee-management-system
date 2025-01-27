@@ -1,0 +1,112 @@
+
+import pymysql
+
+# Establish connection to the database
+def connect_to_database():
+    return pymysql.connect(
+        host="localhost",
+        port=3306,
+        user="root",
+        password="sundar123234",
+        db="EmployeeDB"
+    )
+
+
+def add_employee():
+    name = input("Enter employee name: ")
+    age = int(input("Enter employee age: "))
+    department = input("Enter employee department: ")
+    salary = float(input("Enter employee salary: "))
+
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    try:
+        query = "INSERT INTO employee (name, age, department, salary) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (name, age, department, salary))
+        connection.commit()
+        print("Employee added successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        connection.close()
+
+# Display all employees
+def display_employee():
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    try:
+        query = "SELECT * FROM employee"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        print("\n--- Employee Records ---")
+        for row in results:
+            print(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}, Department: {row[3]}, Salary: {row[4]}")
+        print("-------------------------\n")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        connection.close()
+
+def update_employee():
+    emp_id = int(input("Enter employee ID to update: "))
+    new_name = input("Enter new name: ")
+    new_age = int(input("Enter new age: "))
+    new_department = input("Enter new department: ")
+    new_salary = float(input("Enter new salary: "))
+
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    try:
+        query = "UPDATE employee SET name=%s, age=%s, department=%s, salary=%s WHERE id=%s"
+        cursor.execute(query, (new_name, new_age, new_department, new_salary, emp_id))
+        connection.commit()
+        print("Employee updated successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        connection.close()
+
+def delete_employee():
+    emp_id = int(input("Enter employee ID to delete: "))
+
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    try:
+        query = "DELETE FROM employee WHERE id=%s"
+        cursor.execute(query, (emp_id,))
+        connection.commit()
+        print("Employee deleted successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        connection.close()
+
+
+def main_menu():
+    while True:
+        print("\n--- Employee Management System ---")
+        print("1. Add Employee")
+        print("2. Display Employee")
+        print("3. Update Employee")
+        print("4. Delete Employee")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_employee()
+        elif choice == "2":
+            display_employee()
+        elif choice == "3":
+            update_employee()
+        elif choice == "4":
+            delete_employee()
+        elif choice == "5":
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+# Run the program
+if __name__ == "__main__":
+    main_menu()
+
